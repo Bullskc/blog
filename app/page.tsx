@@ -1,7 +1,13 @@
 import Link from 'next/link';
 import BlogSection from './components/BlogSection';
+import { getCategories, getPosts } from './actions';
 
-export default function Home() {
+export default async function Home() {
+  const [categories, { posts, totalPosts }] = await Promise.all([
+    getCategories(),
+    getPosts({ categoryId: 'all', page: 1, postsPerPage: 6 }),
+  ]);
+
   return (
     <div className="min-h-screen font-sans bg-white text-gray-900">
       {/* Header */}
@@ -200,8 +206,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Blog Section (Client Component) */}
-      <BlogSection />
+      {/* Blog Section (Client Component with Server-Side Data) */}
+      <BlogSection
+        initialCategories={categories}
+        initialPosts={posts}
+        initialTotalPosts={totalPosts}
+      />
 
       {/* CTA Section */}
       <section className="bg-[#0f172a] text-white py-20 relative overflow-hidden">

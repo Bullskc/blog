@@ -1,0 +1,324 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f3f4f6;
+  font-family: var(--font-sans), sans-serif;
+  padding: 1rem;
+}
+
+.card {
+  width: 100%;
+  max-width: 480px;
+  background-color: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  padding: 2.5rem;
+  position: relative;
+  border-top: 4px solid #0f172a;
+}
+
+.logoWrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.logoBg {
+  width: 48px;
+  height: 48px;
+  background-color: #0f172a;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logoShield {
+  position: absolute;
+  color: #a48148;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  background-color: #f0fdf4;
+  color: #166534;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  margin-left: auto;
+  margin-right: auto;
+  width: max-content;
+  display: flex;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  background-color: #22c55e;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+}
+
+.title {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  text-align: center;
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-bottom: 2rem;
+}
+
+.warningBox {
+  display: flex;
+  background-color: #fefce8;
+  border: 1px solid #fef08a;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.warningIcon {
+  color: #ca8a04;
+  flex-shrink: 0;
+  margin-right: 0.75rem;
+}
+
+.warningText {
+  font-size: 0.75rem;
+  color: #854d0e;
+  line-height: 1.4;
+}
+
+.message {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.error {
+  background-color: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.success {
+  background-color: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.labelRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #374151;
+}
+
+.labelRight {
+  display: flex;
+  align-items: center;
+  font-size: 0.75rem;
+  color: #6b7280;
+  gap: 0.25rem;
+}
+
+.inputWrapper {
+  position: relative;
+}
+
+.inputIconLeft {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  padding-left: 0.75rem;
+  color: #9ca3af;
+}
+
+.inputIconRight {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  padding-right: 0.75rem;
+  color: #9ca3af;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.inputIconRight:hover {
+  color: #4b5563;
+}
+
+.input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  color: #111827;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.checkboxGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.checkbox {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 0.25rem;
+  border: 1px solid #d1d5db;
+  color: #0f172a;
+}
+
+.checkboxLabel {
+  margin-left: 0.5rem;
+  font-size: 0.875rem;
+  color: #4b5563;
+  font-weight: 500;
+}
+
+.checkboxSubLabel {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.submitBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0.875rem;
+  background-color: #0f172a;
+  color: #ffffff;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out;
+  margin-top: 0.5rem;
+}
+
+.submitBtn:hover {
+  background-color: #1e293b;
+}
+
+.submitIconLeft {
+  margin-right: 0.5rem;
+}
+
+.submitIconRight {
+  margin-left: 0.5rem;
+}
+
+.helpText {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1.5rem;
+  font-size: 0.75rem;
+  color: #6b7280;
+  gap: 0.25rem;
+}
+
+.helpPhone {
+  color: #a48148;
+  font-weight: 700;
+}
+
+.footerBox {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #f3f4f6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.sslText {
+  display: flex;
+  align-items: center;
+  font-size: 0.75rem;
+  color: #166534;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.footerInfo {
+  font-size: 0.7rem;
+  color: #9ca3af;
+}
+
+.footerStrong {
+  font-weight: 700;
+  color: #6b7280;
+}
+
+.toggleLink {
+  display: block;
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.875rem;
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.toggleLink:hover {
+  text-decoration: underline;
+}

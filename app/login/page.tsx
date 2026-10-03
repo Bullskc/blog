@@ -71,9 +71,9 @@ export default async function AuthPage({
                 name="email"
                 type="email"
                 required
-                placeholder="master@shinlaw.kr"
+                placeholder="bullskc37@gmail.com"
                 className={styles.input}
-                defaultValue={isSignup ? '' : 'master@shinlaw.kr'}
+                defaultValue={isSignup ? '' : 'bullskc37@gmail.com'}
               />
             </div>
           </div>
@@ -102,6 +102,7 @@ export default async function AuthPage({
                 required
                 placeholder="••••••••••••"
                 className={styles.input}
+                defaultValue={isSignup ? '' : 'shin5082@12'}
               />
               <button type="button" className={styles.inputIconRight} title="비밀번호 표시">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

@@ -1,61 +1,58 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { createClient } from '@/utils/supabase/client';
+import { useState, useEffect, useTransition } from 'react';
+import { getCategories, getPosts, type Category, type Post } from '@/app/actions';
 
-type Category = {
-  id: string;
-  name: string;
-  slug: string;
-};
+interface BlogSectionProps {
+  initialCategories?: Category[];
+  initialPosts?: Post[];
+  initialTotalPosts?: number;
+}
 
-type Post = {
-  id: string;
-  title: string;
-  content: string;
-  author: string;
-  view_count: number;
-  created_at: string;
-  categories: Category;
-};
-
-export default function BlogSection() {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [posts, setPosts] = useState<Post[]>([]);
+export default function BlogSection({
+  initialCategories = [],
+  initialPosts = [],
+  initialTotalPosts = 0,
+}: BlogSectionProps) {
+  const [categories, setCategories] = useState<Category[]>(initialCategories);
+  const [posts, setPosts] = useState<Post[]>(initialPosts);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>('all');
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPosts, setTotalPosts] = useState(0);
+  const [totalPosts, setTotalPosts] = useState(initialTotalPosts);
+  const [isPending, startTransition] = useTransition();
   const postsPerPage = 6;
-  const supabase = createClient();
 
+  // 초기 카테고리가 전달되지 않은 경우 서버 액션으로 조회
   useEffect(() => {
-    async function fetchCategories() {
-      const { data } = await supabase.from('categories').select('*');
-      if (data) setCategories(data);
+    if (initialCategories.length === 0) {
+      getCategories().then((data) => {
+        if (data) setCategories(data);
+      });
     }
-    fetchCategories();
-  }, [supabase]);
+  }, [initialCategories]);
 
+  // 카테고리나 페이지가 변경될 때 서버 액션을 통해 서버 사이드에서 데이터 페치
   useEffect(() => {
-    async function fetchPosts() {
-      let query = supabase
-        .from('posts')
-        .select('*, categories(*)', { count: 'exact' });
-
-      if (selectedCategoryId !== 'all') {
-        query = query.eq('category_id', selectedCategoryId);
-      }
-
-      const from = (currentPage - 1) * postsPerPage;
-      const to = from + postsPerPage - 1;
-      query = query.order('created_at', { ascending: false }).range(from, to);
-
-      const { data, count } = await query;
-      if (data) setPosts(data);
-      if (count !== null) setTotalPosts(count);
+    // 최초 렌더링 시 initial 데이터와 동일한 조건인 경우 재호출 생략
+    if (
+      selectedCategoryId === 'all' &&
+      currentPage === 1 &&
+      initialPosts.length > 0 &&
+      posts === initialPosts
+    ) {
+      return;
     }
-    fetchPosts();
-  }, [selectedCategoryId, currentPage, supabase]);
+
+    startTransition(async () => {
+      const result = await getPosts({
+        categoryId: selectedCategoryId,
+        page: currentPage,
+        postsPerPage,
+      });
+      setPosts(result.posts);
+      setTotalPosts(result.totalPosts);
+    });
+  }, [selectedCategoryId, currentPage, initialPosts, posts, postsPerPage]);
 
   const totalPages = Math.ceil(totalPosts / postsPerPage);
 
@@ -96,14 +93,14 @@ export default function BlogSection() {
         </div>
 
         {/* Posts Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 transition-opacity duration-200 ${isPending ? 'opacity-60' : 'opacity-100'}`}>
           {posts.map(post => (
             <div key={post.id} className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col h-full group cursor-pointer">
               <div className="flex justify-between items-center mb-4">
                 <span className="text-xs font-bold px-2.5 py-1 bg-blue-50 text-blue-700 rounded-md">
                   {post.categories?.name}
                 </span>
-                <span className="text-xs text-gray-400 font-medium"># {post.id.substring(0,6)}</span>
+                <span className="text-xs text-gray-400 font-medium"># {String(post.id).substring(0,6)}</span>
               </div>
               <h3 className="font-bold text-[17px] mb-3 line-clamp-2 leading-snug group-hover:text-blue-600 transition-colors">{post.title}</h3>
               <p className="text-gray-500 text-[14px] mb-6 line-clamp-2 leading-relaxed">{post.content}</p>
