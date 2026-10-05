@@ -2,10 +2,14 @@ import Link from 'next/link';
 import BlogSection from './components/BlogSection';
 import { getCategories, getPosts } from './actions';
 
-export default async function Home() {
+export default async function Home({ searchParams }: { searchParams: Promise<{ category?: string; page?: string }> }) {
+  const params = await searchParams;
+  const categoryId = params?.category || 'all';
+  const page = Number(params?.page) || 1;
+
   const [categories, { posts, totalPosts }] = await Promise.all([
     getCategories(),
-    getPosts({ categoryId: 'all', page: 1, postsPerPage: 6 }),
+    getPosts({ categoryId, page, postsPerPage: 6 }),
   ]);
 
   return (
@@ -206,11 +210,13 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Blog Section (Client Component with Server-Side Data) */}
+      {/* Blog Section (Server Component Passes Data to Client) */}
       <BlogSection
-        initialCategories={categories}
-        initialPosts={posts}
-        initialTotalPosts={totalPosts}
+        categories={categories}
+        posts={posts}
+        totalPosts={totalPosts}
+        currentCategory={categoryId}
+        currentPage={page}
       />
 
       {/* CTA Section */}

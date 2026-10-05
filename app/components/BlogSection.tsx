@@ -1,59 +1,22 @@
-'use client';
-
-import { useState, useEffect, useTransition } from 'react';
-import { getCategories, getPosts, type Category, type Post } from '@/app/actions';
+import Link from 'next/link';
+import { type Category, type Post } from '@/app/actions';
 
 interface BlogSectionProps {
-  initialCategories?: Category[];
-  initialPosts?: Post[];
-  initialTotalPosts?: number;
+  categories: Category[];
+  posts: Post[];
+  totalPosts: number;
+  currentCategory: string;
+  currentPage: number;
 }
 
 export default function BlogSection({
-  initialCategories = [],
-  initialPosts = [],
-  initialTotalPosts = 0,
+  categories,
+  posts,
+  totalPosts,
+  currentCategory,
+  currentPage,
 }: BlogSectionProps) {
-  const [categories, setCategories] = useState<Category[]>(initialCategories);
-  const [posts, setPosts] = useState<Post[]>(initialPosts);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string>('all');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPosts, setTotalPosts] = useState(initialTotalPosts);
-  const [isPending, startTransition] = useTransition();
   const postsPerPage = 6;
-
-  // 초기 카테고리가 전달되지 않은 경우 서버 액션으로 조회
-  useEffect(() => {
-    if (initialCategories.length === 0) {
-      getCategories().then((data) => {
-        if (data) setCategories(data);
-      });
-    }
-  }, [initialCategories]);
-
-  // 카테고리나 페이지가 변경될 때 서버 액션을 통해 서버 사이드에서 데이터 페치
-  useEffect(() => {
-    // 최초 렌더링 시 initial 데이터와 동일한 조건인 경우 재호출 생략
-    if (
-      selectedCategoryId === 'all' &&
-      currentPage === 1 &&
-      initialPosts.length > 0 &&
-      posts === initialPosts
-    ) {
-      return;
-    }
-
-    startTransition(async () => {
-      const result = await getPosts({
-        categoryId: selectedCategoryId,
-        page: currentPage,
-        postsPerPage,
-      });
-      setPosts(result.posts);
-      setTotalPosts(result.totalPosts);
-    });
-  }, [selectedCategoryId, currentPage, initialPosts, posts, postsPerPage]);
-
   const totalPages = Math.ceil(totalPosts / postsPerPage);
 
   return (
@@ -61,10 +24,10 @@ export default function BlogSection({
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-2xl font-bold text-gray-900">신기철 법무사의 실무 법률 칼럼</h2>
-          <a href="#" className="text-sm font-medium text-gray-600 flex items-center hover:text-gray-900 transition-colors">
+          <Link href="#" className="text-sm font-medium text-gray-600 flex items-center hover:text-gray-900 transition-colors">
             전체 칼럼 및 판례 해설 보기 
             <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
-          </a>
+          </Link>
         </div>
 
         {/* Categories */}
@@ -75,25 +38,27 @@ export default function BlogSection({
              <button className="absolute right-1 top-1 bg-[#0f172a] text-white px-4 py-1.5 rounded-full text-xs font-medium hover:bg-gray-800 transition-colors">검색</button>
            </div>
           
-          <button 
-            onClick={() => {setSelectedCategoryId('all'); setCurrentPage(1);}}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${selectedCategoryId === 'all' ? 'bg-[#0f172a] text-white' : 'text-gray-600 hover:bg-white hover:shadow-sm border border-transparent'}`}
+          <Link 
+            href={`/?category=all&page=1`}
+            scroll={false}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${currentCategory === 'all' ? 'bg-[#0f172a] text-white' : 'text-gray-600 hover:bg-white hover:shadow-sm border border-transparent'}`}
           >
             전체
-          </button>
+          </Link>
           {categories.map(cat => (
-            <button 
+            <Link 
               key={cat.id}
-              onClick={() => {setSelectedCategoryId(cat.id); setCurrentPage(1);}}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border ${selectedCategoryId === cat.id ? 'bg-[#0f172a] text-white border-[#0f172a]' : 'text-gray-600 hover:bg-gray-50 bg-white border-gray-200'}`}
+              href={`/?category=${cat.id}&page=1`}
+              scroll={false}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border ${currentCategory === cat.id ? 'bg-[#0f172a] text-white border-[#0f172a]' : 'text-gray-600 hover:bg-gray-50 bg-white border-gray-200'}`}
             >
               #{cat.name}
-            </button>
+            </Link>
           ))}
         </div>
 
         {/* Posts Grid */}
-        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 transition-opacity duration-200 ${isPending ? 'opacity-60' : 'opacity-100'}`}>
+        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 transition-opacity duration-200 opacity-100`}>
           {posts.map(post => (
             <div key={post.id} className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col h-full group cursor-pointer">
               <div className="flex justify-between items-center mb-4">
@@ -119,13 +84,14 @@ export default function BlogSection({
         {totalPages > 1 && (
           <div className="flex justify-center mt-12 space-x-2">
             {Array.from({ length: totalPages }).map((_, i) => (
-              <button
+              <Link
                 key={i}
-                onClick={() => setCurrentPage(i + 1)}
+                href={`/?category=${currentCategory}&page=${i + 1}`}
+                scroll={false}
                 className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-medium transition-colors ${currentPage === i + 1 ? 'bg-[#0f172a] text-white shadow-md' : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'}`}
               >
                 {i + 1}
-              </button>
+              </Link>
             ))}
           </div>
         )}
